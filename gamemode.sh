@@ -17,7 +17,7 @@ case "$1" in
       powerprofilesctl get | tee "$state"
     fi
     powerprofilesctl set "$ppd"
-    systemctl stop ananicy-cpp.service
+    # systemctl stop ananicy-cpp.service
     ;;
   end)
     echo "Ending gamemode..."
