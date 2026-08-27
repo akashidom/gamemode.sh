@@ -25,6 +25,7 @@ case "$1" in
       powerprofilesctl set "$(cat "$state")"
       rm "$state"
     fi
+    systemctl reset-failed ananicy-cpp.service
     systemctl start ananicy-cpp.service
     ;;
   *)
