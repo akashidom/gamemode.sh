@@ -6,27 +6,33 @@ if [ $# -eq 0 ]; then
 fi
 
 cache="$HOME/.cache/gamemode/"
-state="$cache/power-profiles-daemon.state"
-ppd="performance"
+statefile="$cache/power-profiles-daemon.state"
+state="performance"
+
+ppd="power-profiles-daemon.service"
+throttled="throttled.service"
 
 case "$1" in
   start)
     echo "Starting gamemode..."
     mkdir -pv "$cache"
-    if [ ! -f "$state" ]; then
-      powerprofilesctl get | tee "$state"
+    if [ ! -f "$statefile" ]; then
+      powerprofilesctl get | tee "$statefile"
     fi
-    powerprofilesctl set "$ppd"
-    # systemctl stop ananicy-cpp.service
+    powerprofilesctl set "$state"
+    systemctl stop "$ppd"
+    systemctl reset-failed "$throttled"
+    systemctl start "$throttled"
     ;;
   end)
     echo "Ending gamemode..."
-    if [ -f "$state" ]; then
-      powerprofilesctl set "$(cat "$state")"
-      rm "$state"
+    systemctl stop "$throttled"
+    systemctl reset-failed "$ppd"
+    systemctl start "$ppd"
+    if [ -f "$statefile" ]; then
+      powerprofilesctl set "$(cat "$statefile")"
+      rm "$statefile"
     fi
-    systemctl reset-failed ananicy-cpp.service
-    systemctl start ananicy-cpp.service
     ;;
   *)
     echo "Invalid argument: $1"
