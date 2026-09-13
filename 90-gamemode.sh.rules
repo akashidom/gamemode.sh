@@ -1,0 +1,30 @@
+polkit.addRule(function (action, subject) {
+    if (!subject.active || subject.isInAdminGroup()) {
+        return polkit.Result.NOT_HANDLED;
+    }
+
+    if (action.id === "org.freedesktop.systemd1.manage-units") {
+        const unit = action.lookup("unit");
+        const verb = action.lookup("verb");
+
+        const allowedUnits = [
+            "power-profiles-daemon.service",
+            "throttled.service",
+        ];
+
+        const allowedVerbs = [
+            "start",
+            "stop",
+            "reset-failed",
+        ];
+
+        if (
+            allowedUnits.includes(unit) &&
+            allowedVerbs.includes(verb)
+        ) {
+            return polkit.Result.YES;
+        }
+    }
+
+    return polkit.Result.NOT_HANDLED;
+});
