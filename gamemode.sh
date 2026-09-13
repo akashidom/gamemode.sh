@@ -6,10 +6,11 @@ if [ $# -eq 0 ]; then
 fi
 
 cache="$HOME/.cache/gamemode/"
-statefile="$cache/power-profiles-daemon.state"
+statefile="$cache/tlp.state"
 state="performance"
 
-ppd="power-profiles-daemon.service"
+tlp="tlp.service"
+ppd="tlp-pd.service"
 throttled="throttled.service"
 
 case "$1" in
@@ -19,18 +20,18 @@ case "$1" in
     if [ ! -f "$statefile" ]; then
       powerprofilesctl get | tee "$statefile"
     fi
-    powerprofilesctl set "$state"
-    systemctl stop "$ppd"
+    tlpctl set "$state"
+    systemctl stop "$tlp" "$ppd"
     systemctl reset-failed "$throttled"
     systemctl start "$throttled"
     ;;
   end)
     echo "Ending gamemode..."
     systemctl stop "$throttled"
-    systemctl reset-failed "$ppd"
-    systemctl start "$ppd"
+    systemctl reset-failed "$tlp" "$ppd"
+    systemctl start "$tlp" "$ppd"
     if [ -f "$statefile" ]; then
-      powerprofilesctl set "$(cat "$statefile")"
+      tlpctl set "$(cat "$statefile")"
       rm "$statefile"
     fi
     ;;
