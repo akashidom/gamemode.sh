@@ -22,7 +22,6 @@ case "$1" in
     fi
     tlpctl set "$state"
     systemctl stop "$tlp" "$ppd"
-    systemctl reset-failed "$throttled"
     systemctl start "$throttled"
     ;;
   end)
