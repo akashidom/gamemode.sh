@@ -18,7 +18,7 @@ case "$1" in
     echo "Starting gamemode..."
     mkdir -pv "$cache"
     if [ ! -f "$statefile" ]; then
-      powerprofilesctl get | tee "$statefile"
+      tlpctl get | tee "$statefile"
     fi
     tlpctl set "$state"
     systemctl stop "$tlp" "$ppd"
