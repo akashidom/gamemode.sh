@@ -22,7 +22,6 @@ case "$1" in
     powerprofilesctl set "$state"
     systemctl stop "$ppd"
     systemctl reset-failed "$throttled"
-    systemctl start "$throttled"
     ;;
   end)
     echo "Ending gamemode..."
