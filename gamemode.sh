@@ -11,6 +11,7 @@ state="performance"
 
 tlp="tlp.service"
 ppd="tlp-pd.service"
+thermald="thermald.service"
 throttled="throttled.service"
 
 case "$1" in
@@ -21,14 +22,14 @@ case "$1" in
       tlpctl get | tee "$statefile"
     fi
     tlpctl set "$state"
-    systemctl stop "$tlp" "$ppd"
+    systemctl stop "$tlp" "$ppd" "$thermald"
     systemctl start "$throttled"
     ;;
   end)
     echo "Ending gamemode..."
     systemctl stop "$throttled"
-    systemctl reset-failed "$tlp" "$ppd"
-    systemctl start "$tlp" "$ppd"
+    systemctl reset-failed "$tlp" "$ppd" "$thermald"
+    systemctl start "$tlp" "$ppd" "$thermald"
     if [ -f "$statefile" ]; then
       tlpctl set "$(cat "$statefile")"
       rm "$statefile"
